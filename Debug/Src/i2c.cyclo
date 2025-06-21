@@ -1,0 +1,7 @@
+../Src/i2c.c:26:6:I2C1_init	1
+../Src/i2c.c:54:6:I2C1_write_byte	4
+../Src/i2c.c:88:5:I2C1_write	10
+../Src/i2c.c:130:6:I2C1_read_byte	3
+../Src/i2c.c:161:5:I2C1_read	12
+../Src/i2c.c:210:13:I2C1_gpio_init	1
+../Src/i2c.c:242:6:I2C1_scan_bus	6

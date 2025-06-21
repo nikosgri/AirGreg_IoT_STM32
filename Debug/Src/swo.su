@@ -1,0 +1,5 @@
+../Src/swo.c:18:5:__io_putchar	16	static
+../Src/swo.c:25:6:LOG_INF	16	static
+../Src/swo.c:32:6:LOG_ERR	16	static
+../Src/swo.c:39:6:LOG_WRN	16	static
+../Src/swo.c:46:13:log_message	312	static
