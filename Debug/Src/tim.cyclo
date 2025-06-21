@@ -1,0 +1,5 @@
+/home/grego/STM32CubeIDE/workspace/STM32L0_Wi-Fi/CMSIS/Include/core_cm0plus.h:741:22:__NVIC_EnableIRQ	2
+/home/grego/STM32CubeIDE/workspace/STM32L0_Wi-Fi/CMSIS/Include/core_cm0plus.h:848:22:__NVIC_SetPriority	2
+../Src/tim.c:20:6:tim2_init	1
+../Src/tim.c:50:6:tim2_start_it	1
+../Src/tim.c:65:6:tim2_stop_it	1

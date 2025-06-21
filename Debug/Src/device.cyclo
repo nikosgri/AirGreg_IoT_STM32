@@ -1,0 +1,8 @@
+/home/grego/STM32CubeIDE/workspace/STM32L0_Wi-Fi/CMSIS/Include/core_cm0plus.h:741:22:__NVIC_EnableIRQ	2
+/home/grego/STM32CubeIDE/workspace/STM32L0_Wi-Fi/CMSIS/Include/core_cm0plus.h:848:22:__NVIC_SetPriority	2
+../Src/device.c:21:6:pulse1_init	1
+../Src/device.c:69:6:CircularBuffer_Init	1
+../Src/device.c:82:6:CircularBuffer_IsEmpty	1
+../Src/device.c:93:6:CircularBuffer_IsFull	1
+../Src/device.c:108:6:CircularBuffer_Push	2
+../Src/device.c:132:6:CircularBuffer_Pop	2

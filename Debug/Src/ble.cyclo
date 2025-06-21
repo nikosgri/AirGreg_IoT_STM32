@@ -1,0 +1,2 @@
+../Src/ble.c:16:14:ble_sync_process	15
+../Src/ble.c:161:6:ble_split_credentials	2
