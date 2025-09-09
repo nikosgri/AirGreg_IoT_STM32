@@ -1,7 +1,0 @@
-../Src/https.c:14:14:https_set_url	56	static
-../Src/https.c:50:14:https_set_headers	64	static
-../Src/https.c:86:14:https_post	128	static
-../Src/https.c:122:14:https_put	128	static
-../Src/https.c:157:6:https_url_encode_colons	32	static
-../Src/https.c:178:14:https_update_firebase	176	static
-../Src/https.c:201:13:strip_quotes	24	static

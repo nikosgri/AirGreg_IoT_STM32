@@ -1,4 +1,4 @@
-/home/grego/STM32CubeIDE/workspace/STM32L0_Wi-Fi/CMSIS/Include/core_cm0plus.h:741:22:__NVIC_EnableIRQ	16	static
+/home/grego/STM32CubeIDE/Personal/embedded_device/CMSIS/Include/core_cm0plus.h:741:22:__NVIC_EnableIRQ	16	static
 ../Src/rtc.c:32:5:rtc_init	24	static
 ../Src/rtc.c:133:10:_RTC_get_date	8	static
 ../Src/rtc.c:143:10:_RTC_get_year	8	static
@@ -13,6 +13,6 @@
 ../Src/rtc.c:269:13:RTC_validateTime	24	static
 ../Src/rtc.c:289:13:RTC_validateDate	24	static
 ../Src/rtc.c:306:5:RTC_set_alarm	64	static
-../Src/rtc.c:418:10:RTC_get_timestamp	56	static
-../Src/rtc.c:455:6:_RTC_date	24	static
-../Src/rtc.c:469:6:_RTC_time	24	static
+../Src/rtc.c:421:10:RTC_get_timestamp	56	static
+../Src/rtc.c:458:6:_RTC_date	24	static
+../Src/rtc.c:472:6:_RTC_time	24	static

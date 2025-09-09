@@ -2,12 +2,16 @@
  * https.c
  *
  *  Created on: May 24, 2025
- *      Author: grego
+ *      Author: Nikolaos Grigoriadis
+ *      Email : n.grigoriadis09@gmail.com
+ *      Title : Embedded software engineer
+ *      Degree: BSc and MSc in computer science, university of Ioannina
  */
 
 
 #include "https.h"
 #include "device.h"
+#include "wifi.h"
 
 static void strip_quotes(char *str);
 
@@ -163,10 +167,10 @@ void https_url_encode_colons(char *mac, char *encoded, size_t encoded_size)
     while (*mac && i + 3 < encoded_size) {
         if (*mac == ':') {
             // Replace ':' with "%3A"
-            strncpy(&encoded[i], "%3A", 3);
+            strncpy(&encoded[i], "%3A", sizeof(encoded));
             i += 3;
         } else {
-            // Convert to uppercase and copy
+            // Convert to upper case and copy
             encoded[i++] = toupper((unsigned char)*mac);
         }
         mac++;

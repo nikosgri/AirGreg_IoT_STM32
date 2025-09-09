@@ -2,7 +2,10 @@
  * sgp30.h
  *
  *  Created on: Jun 17, 2025
- *      Author: grego
+ *      Author: Nikolaos Grigoriadis
+ *      Email : n.grigoriadis09@gmail.com
+ *      Title : Embedded software engineer
+ *      Degree: BSc and MSc in computer science, university of Ioannina
  */
 
 #ifndef INC_SGP30_H_

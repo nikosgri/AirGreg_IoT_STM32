@@ -1,7 +1,0 @@
-../Src/https.c:14:14:https_set_url	4
-../Src/https.c:50:14:https_set_headers	4
-../Src/https.c:86:14:https_post	4
-../Src/https.c:122:14:https_put	4
-../Src/https.c:157:6:https_url_encode_colons	5
-../Src/https.c:178:14:https_update_firebase	1
-../Src/https.c:201:13:strip_quotes	4

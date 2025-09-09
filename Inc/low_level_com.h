@@ -19,15 +19,16 @@
 #include <timebase.h>
 #include <stdbool.h>
 
-typedef enum {
-	LL_OK,
-	LL_BUSY,
-	LL_TIMEOUT,
-	LL_ERROR
-}low_level_communication_state_t;
+//typedef enum {
+//	MODEM_OK,
+//	MODEM_BUSY,
+//	MODEM_TIMEOUT,
+//	MODEM_ERROR
+//}low_level_communication_state_t;
 
-low_level_communication_state_t send_command_wait_result(const char *command, const char *exp, const char *exp_parse,
-		const char *exp_end, uint32_t num_of_exp, uint32_t delay, ...);
+//low_level_communication_state_t send_command(const char *command, const char *exp, const char *exp_parse,
+//		const char *exp_end, uint32_t num_of_exp, uint32_t delay, ...);
+
 
 
 #endif /* LOW_LEVEL_COM_H_ */

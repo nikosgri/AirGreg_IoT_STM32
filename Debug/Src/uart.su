@@ -1,8 +1,8 @@
-/home/grego/STM32CubeIDE/workspace/STM32L0_Wi-Fi/CMSIS/Include/core_cm0plus.h:741:22:__NVIC_EnableIRQ	16	static
-/home/grego/STM32CubeIDE/workspace/STM32L0_Wi-Fi/CMSIS/Include/core_cm0plus.h:848:22:__NVIC_SetPriority	24	static
-../Src/uart.c:27:6:uart2_init	16	static
-../Src/uart.c:82:6:uart1_init	16	static
-../Src/uart.c:148:6:uart_transmit_byte	16	static
-../Src/uart.c:167:5:uart1_transmit	24	static
-../Src/uart.c:199:6:uart1_enable_rx_interrupt	8	static
-../Src/uart.c:221:6:uart1_disable_rx_interrupt	16	static
+/home/grego/STM32CubeIDE/Personal/embedded_device/CMSIS/Include/core_cm0plus.h:741:22:__NVIC_EnableIRQ	16	static
+/home/grego/STM32CubeIDE/Personal/embedded_device/CMSIS/Include/core_cm0plus.h:848:22:__NVIC_SetPriority	24	static
+../Src/uart.c:26:6:uart2_init	16	static
+../Src/uart.c:63:6:uart1_init	16	static
+../Src/uart.c:129:6:uart_transmit_byte	16	static
+../Src/uart.c:148:5:uart1_transmit	24	static
+../Src/uart.c:180:6:uart1_enable_rx_interrupt	8	static
+../Src/uart.c:202:6:uart1_disable_rx_interrupt	16	static

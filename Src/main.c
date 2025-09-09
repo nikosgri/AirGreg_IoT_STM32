@@ -109,14 +109,9 @@ stateflowType state_table[NUM_OF_STATES] =
 
 //TODO: Add encryption to the payload
 
-/* Public variables */
-char encoded_mac[64]; // = "80%3A7D%3A3A%3AA3%3AE6%3A06";
-char url[256];
-
 int main(void)
 {
 	/* Local variables */
-	char credentials[40]={0};
 
     /* Initialize HSI as system clock */
     rccInit();
@@ -160,111 +155,81 @@ int main(void)
     /* Handle device flags and set the sequence number accordingly */
     device.clear_flags = 0;
     device.flg.first_time = 1;
-    device.flg.isConnected=1;
     sequence_number = 0;
 
-//    send_command_wait_result("AT+RST", "OK", NULL, NULL, 0, 1000);
-//
-//    delay_ms(2000);
-//
-//    /* Test device peripherals */
-//    initiate_testing();
+    /* Test device peripherals */
+    initiate_testing();
 
-    I2C1_scan_bus();
-	bme280_t sensor;
-	float temperature, humidity;
-	int ret;
-    // Set desired settings
-    sensor.temp_oversampling = BME280_OVERSAMPLING_16X;
-    sensor.hum_oversampling = BME280_OVERSAMPLING_16X;
-    sensor.filter = BME280_FILTER_8;
-    // Initialize sensor
-    ret = bme280_init(&sensor);
-    if (ret != BME280_OK) {
-        printf("BME280 initialization failed: %d\n", ret);
-        return 1;
-    }
 
     while (1)
     {
+    	/*Conditions for updating the server*/
+		if ((device.flg.first_time || device.flg.keep_alive))
+		{
 
+			/*Create the frame*/
+			wifi_frame_format();
 
-		// Read averaged measurements (6 samples)
-		ret = bme280_read_averaged_measurements(&sensor, &temperature, &humidity, 6);
-		if (ret != BME280_OK) {
-			printf("Failed to read measurements: %d\n", ret);
-			return 1;
+			/*Start server update*/
+			server_update();
+
+#if 0
+				/* Update Firebase Real time database */
+				https_update_firebase();
+#endif
+
+			/*Clear all possible event flags*/
+			device.flg.first_time = 0;
+			device.flg.keep_alive = 0;
+
+			/*Increase the packet number*/
+			sequence_number = (sequence_number + 1) % 10000; //Wrap around if you reach 1000 packets.
 		}
 
-		printf("Temperature: %.2f °C, Humidity: %.2f %%\n", temperature, humidity);
 
-		delay_ms(2000);
+#if 0
+        if (device.flg.ble_conn)
+        {
+        	ble_sync_process(credentials);
+        	ble_split_credentials(credentials, ssid, pswd);
+        	WiFi_init();
+            /* Create URL */
+            https_url_encode_colons(node.url_path, encoded_mac, sizeof(encoded_mac));
+            printf("encoded: %s\r\n", encoded_mac);
+            snprintf(url, sizeof(url), "https://smart-indoor-system-default-rtdb.europe-west1.firebasedatabase.app/devices/%s.json", encoded_mac);
+            /* Set DATABASE URL */
+        	https_set_url(url);
+        	/* Update DATABASE headers */
+        	https_set_headers(DATABASE_HEADERS);
+			device.flg.ble_conn = 0;
+        }
+#endif
 
-//        if (node.connection_status == CONNECTED)
-//        {
-//        	if ((device.flg.first_time || device.flg.keep_alive))
-//			{
-//				/*Create the frame*/
-//				WiFi_frame_format();
-//
-//				/*Start server update*/
-//				server_update();
-//
-//				/* Update Firebase Real time database */
-				https_update_firebase();
-//
-//				/*Clear all possible event flags*/
-//				device.flg.first_time = 0;
-//				device.flg.keep_alive = 0;
-//
-//				/*Increase the packet number*/
-//				sequence_number = (sequence_number + 1) % 10000; //Wrap around if you reach 1000 packets.
-//			}
-//        }
-//
-//        if (device.flg.ble_conn)
-//        {
-//        	ble_sync_process(credentials);
-//        	ble_split_credentials(credentials, ssid, pswd);
-//        	WiFi_init();
-//            /* Create URL */
-//            https_url_encode_colons(node.url_path, encoded_mac, sizeof(encoded_mac));
-//            printf("encoded: %s\r\n", encoded_mac);
-//            snprintf(url, sizeof(url), "https://smart-indoor-system-default-rtdb.europe-west1.firebasedatabase.app/devices/%s.json", encoded_mac);
-//            /* Set DATABASE URL */
-//        	https_set_url(url);
-//        	/* Update DATABASE headers */
-//        	https_set_headers(DATABASE_HEADERS);
-//			device.flg.ble_conn = 0;
-//        }
-//
-//
-//		/*Set the alarm in seconds*/
-//		RTC_set_alarm(keep_alive);
-//
-//#ifdef DEBUG_SYSTEM
-//        LOG_INF("Going to sleep");
-//        LOG_INF("Keep alive message in %d sec - %d min", keep_alive, (keep_alive/60));
-//#endif
-//
-//        /*Avoid conflicts with low power mode*/
-//        Disable_SysTick();
-//        /*Prepare the system for low power consumption*/
-//        prepare_LowPower();
-//        /*Enter stop mode with voltage regulator off*/
-//        enter_SleepMode();
-//        /*Wake up the MCU*/
-//        mcu_WakeUp();
-//        /*Resume SysTick timer*/
-//        Resume_SysTick();
-//
-//#ifdef DEBUG_SYSTEM
-//        LOG_INF("Just wake up");
-//#endif
-//
-//    	/*Query the WiFi connection status*/
-//        WiFi_status();
+		/*Set the alarm in seconds*/
+		RTC_set_alarm(keep_alive);
 
+#ifdef DEBUG_SYSTEM
+        LOG_INF("Going to sleep");
+        LOG_INF("Keep alive message in %d sec - %d min", keep_alive, (keep_alive/60));
+#endif
+
+        /*Avoid conflicts with low power mode*/
+        Disable_SysTick();
+        /*Prepare the system for low power consumption*/
+        prepare_LowPower();
+        /*Enter stop mode with voltage regulator off*/
+        enter_SleepMode();
+        /*Wake up the MCU*/
+        mcu_WakeUp();
+        /*Resume SysTick timer*/
+        Resume_SysTick();
+
+#ifdef DEBUG_SYSTEM
+        LOG_INF("Just wake up");
+#endif
+
+    	/*Query the WiFi connection status*/
+        wifi_get_connection_status();
     }
 
     /*Never return*/
@@ -335,34 +300,42 @@ static void initiate_testing(void)
 #endif
 
     /*Check if the WiFi modem is in sleep mode*/
-    wifi_state = _get_wifi_state();
+    wifi_state = modem_get_sleep_state();
     if (wifi_state != 0)
     {
         /*Wake-up the WiFi module*/
-        //result_code = send_command("AT+SLEEP=0", "OK", NULL, "OK", 0, 1000);
-    	result_code = send_command_wait_result("AT+SLEEP=0", "OK", NULL, NULL, 0, 1000);
+        result_code = send_command("AT+SLEEP=0", "OK", NULL, "OK", 0, 1000);
         if (result_code != 0)
         {
+#ifdef DEBUG_SYSTEM
             LOG_WRN("Couldn't wake-up the WiFi module");
+#endif
         }
-
+#ifdef DEBUG_SYSTEM
          LOG_INF("Device wake-up successfully");
+#endif
     }
 
     /*Disable echo mode*/
-//    result_code = send_command("ATE0", "OK", NULL, "OK", 0, 1000);
-    result_code = send_command_wait_result("ATE0", "OK", NULL, NULL, 0, 1000);
+    result_code = send_command("ATE0", "OK", NULL, "OK", 0, 1000);
     if (result_code != 0)
     {
+#ifdef DEBUG_SYSTEM
         LOG_WRN("Couldn't disable echo mode");
+#endif
     }
     else if (result_code == 0)
+    {
+#ifdef DEBUG_SYSTEM
     	LOG_INF("Echo mode disabled successfully");
+#endif
+    }
+
 
     printf("%c%c", RETURN, NEWLINE);
 
     /*Check if the WiFi modem is accessible*/
-    result_code = WiFi_check();
+    result_code = modem_is_accessible();
     if (result_code != WIFI_OK)
     {
         /*Failure*/
@@ -375,15 +348,15 @@ static void initiate_testing(void)
     }
 
     /*Check if the device is connected online*/
-    WiFi_status();
-//    if (node.connection_status != CONNECTED)
-//    {
-//        /*Connect online to take information*/
-//        WiFi_init();
-//    }
+    wifi_get_connection_status();
+    if (node.connection_status != CONNECTED)
+    {
+        /*Connect online to take information*/
+    	wifi_register_online();
+    }
 
     /*Get the IMEI number of the device*/
-    result_code = WiFi_get_IMEI();
+    result_code = modem_get_imei();
     if (result_code != WIFI_OK)
     {
         /*Failure*/
@@ -396,7 +369,7 @@ static void initiate_testing(void)
     }
 
     /*Get signal strength*/
-    result_code = WiFi_get_RSSI();
+    result_code = modem_get_rssi();
     if (result_code != WIFI_OK)
     {
         /*Failure*/
@@ -409,12 +382,11 @@ static void initiate_testing(void)
     }
 
     /*Read time*/
-    WiFi_ntp_init(RTClock);
+    wifi_update_time(RTClock);
 
 
 #ifdef DEBUG_SYSTEM
     LOG_INF("---------- TEST RESULTS ----------");
-#endif
 
     printf("%c%c", RETURN, NEWLINE);
 
@@ -463,7 +435,6 @@ static void initiate_testing(void)
 
     printf("%c%c", RETURN, NEWLINE);
 
-#ifdef DEBUG_SYSTEM
     LOG_INF("---------- END OF TEST CODE ----------");
 #endif
 }
@@ -513,7 +484,7 @@ void server_update()
     {
 
 #ifdef DEBUG_SYSTEM
-    	LOG_INF("\t\tSTATE : %s%c%c", state_table[current_state].state_name, RETURN, NEWLINE);
+    	printf("\t\tSTATE : %s%c%c", state_table[current_state].state_name, RETURN, NEWLINE);
 #endif
         /*Execute the current state's function and get the result (0 for failure, 1 for success)*/
         result = state_table[current_state].state_function();
@@ -559,7 +530,7 @@ int FSM_wifi_connection()
     int result = WIFI_FAIL;
 
     /*Set up WiFi connection*/
-    result = WiFi_init();
+    result = wifi_register_online();
 
     /*Check for error codes*/
     if (result == WIFI_OK)
@@ -586,7 +557,7 @@ int FSM_read_time()
     rtcType time={0};
 
     /*Take current time from NTP server*/
-    result = WiFi_ntp_init(time);
+    result = wifi_update_time(time);
 
     /*Check the result code*/
     if (result != 0)
@@ -609,7 +580,7 @@ int FSM_open_connection()
     int result = -1;
 
     /*Start a UDP connection*/
-    result = WiFi_open_connection(SERVER_IP, SERVER_PORT);
+    result = modem_open_connection(SERVER_IP, SERVER_PORT);
 
     /*Check the result code*/
     if (result != 0)
@@ -632,7 +603,7 @@ int FSM_send_data()
     int result = -1;
 
     /*Start a UDP connection*/
-    result = WiFi_send_udp();
+    result = modem_send_udp();
 
     /*Check the result code*/
     if (result != 0)
@@ -659,10 +630,12 @@ int FSM_receive_data()
     memset(response_payload, 0, sizeof(response_payload));
 
     /*Receive data*/
-    result = WiFi_receive_data(response_payload);
+    result = modem_receive_data(response_payload);
     if (result != 0)
     {
+#ifdef DEBUG_SYSTEM
         LOG_ERR("In receiving data from server");
+#endif
         return -1;
     }
 
@@ -672,10 +645,11 @@ int FSM_receive_data()
     VariableHolderType variables[key_count];
     extract_json_data(response_payload, keys, key_count, variables);
 
+#ifdef DEBUG_SYSTEM
     LOG_INF("RECEIVE: %s", response_payload);
     LOG_INF("Sequence Number      : %d", variables[0].int_val);
     LOG_INF("Keep Alive Frequency : %d", variables[1].int_val);
-
+#endif
     keep_alive = variables[1].int_val;
 
     return 0;
@@ -693,7 +667,7 @@ int FSM_close_connection()
     int result = -1;
 
     /*Take current time from NTP server*/
-    result = WiFi_close_connection();
+    result = modem_close_connection();
 
     /*Check the result code*/
     if (result != 0)
@@ -716,7 +690,7 @@ int FSM_power_down()
     int result = -1;
 
     /*Take current time from NTP server*/
-    result = WiFi_power_down();
+    result = modem_power_down();
 
     /*Check the result code*/
     if (result != 0)

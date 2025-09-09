@@ -39,11 +39,10 @@
 /*Maximum code retries*/
 #define MAXIMUM_RETRIES       4
 /*Server's IP address*/
-#define SERVER_IP             "192.168.1.20"
+#define SERVER_IP             "192.168.1.21"
 /*Server's port number*/
 #define SERVER_PORT           5050
-/*Enable debugging*/
-#define DEBUG_SYSTEM
+
 
 
 

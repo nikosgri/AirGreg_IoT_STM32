@@ -2,7 +2,11 @@
  * bme280.c
  *
  *  Created on: Jun 16, 2025
- *      Author: grego
+ *      Author: Nikolaos Grigoriadis
+ *      Email : n.grigoriadis09@gmail.com
+ *      Title : Embedded software engineer
+ *      Degree: BSc and MSc in computer science, university of Ioannina
+ *      Description: Temperature & Humidity measurements
  */
 
 
@@ -73,10 +77,12 @@ bme280_status bme280_read_chip_id(void)
 	uint8_t chip_id = 0;
 
 	/* Get chip ID */
-	I2C1_write_byte(BME280_I2C_ADDR, BME280_REG_ID);
+//	I2C1_write_byte(BME280_I2C_ADDR, BME280_REG_ID);
+	I2Cx_write_byte(I2C1, BME280_I2C_ADDR, BME280_REG_ID);
 
 	/* Read chip ID */
-	I2C1_read_byte(BME280_I2C_ADDR, &chip_id);
+//	I2C1_read_byte(BME280_I2C_ADDR, &chip_id);
+	I2Cx_read_byte(I2C1, BME280_I2C_ADDR, &chip_id);
 
 	/* Check if the chip ID is correct */
 	if (chip_id != BME280_CHIP_ID)
@@ -99,7 +105,8 @@ bme280_status bme280_read_chip_id(void)
 bme280_status bme280_soft_reset(void)
 {
 	uint8_t cmd = BME280_RESET_CMD;
-	int ret = I2C1_write(BME280_I2C_ADDR, BME280_REG_RESET, &cmd, 1);
+//	int ret = I2C1_write(BME280_I2C_ADDR, BME280_REG_RESET, &cmd, 1);
+	int ret = I2Cx_write(I2C1, BME280_I2C_ADDR, BME280_REG_RESET, &cmd, 1);
 	if (ret != BME280_OK) {
 		return ret;
 	}
@@ -122,13 +129,15 @@ bme280_status bme280_read_calibration_data(bme280_t *dev)
     int ret;
 
     // Read 0x88–0xA1 (26 bytes)
-    ret = I2C1_read(BME280_I2C_ADDR, 0x88, calib_data, 26);
+//    ret = I2C1_read(BME280_I2C_ADDR, 0x88, calib_data, 26);
+    ret = I2Cx_read(I2C1, BME280_I2C_ADDR, 0x88, calib_data, 26);
     if (ret != BME280_OK) {
         return ret;
     }
 
     // Read 0xE1–0xE7 (7 bytes)
-    ret = I2C1_read(BME280_I2C_ADDR, 0xE1, calib_data + 26, 7);
+//    ret = I2C1_read(BME280_I2C_ADDR, 0xE1, calib_data + 26, 7);
+    ret = I2Cx_read(I2C1, BME280_I2C_ADDR, 0xE1, calib_data + 26, 7);
     if (ret != BME280_OK) {
         return ret;
     }
@@ -163,21 +172,24 @@ int bme280_set_settings(bme280_t *dev)
 
     // Set humidity control register
     ctrl_hum = dev->hum_oversampling & 0x07;
-    ret = I2C1_write(BME280_I2C_ADDR, BME280_REG_CTRL_HUM, &ctrl_hum, 1);
+//    ret = I2C1_write(BME280_I2C_ADDR, BME280_REG_CTRL_HUM, &ctrl_hum, 1);
+    ret = I2Cx_write(I2C1, BME280_I2C_ADDR, BME280_REG_CTRL_HUM, &ctrl_hum, 1);
     if (ret != BME280_OK) {
         return ret;
     }
 
     // Set config register (filter and standby time)
     config = ((0x00 << 5) | (dev->filter << 2) | 0x00); // Standby time = 0.5ms
-    ret = I2C1_write(BME280_I2C_ADDR, BME280_REG_CONFIG, &config, 1);
+//    ret = I2C1_write(BME280_I2C_ADDR, BME280_REG_CONFIG, &config, 1);
+    ret = I2Cx_write(I2C1, BME280_I2C_ADDR, BME280_REG_CONFIG, &config, 1);
     if (ret != BME280_OK) {
         return ret;
     }
 
     // Set measurement control register
     ctrl_meas = ((dev->temp_oversampling << 5) | (0x00 << 2) | dev->mode);
-    return I2C1_write(BME280_I2C_ADDR, BME280_REG_CTRL_MEAS, &ctrl_meas, 1);
+//    return I2C1_write(BME280_I2C_ADDR, BME280_REG_CTRL_MEAS, &ctrl_meas, 1);
+    return I2Cx_write(I2C1, BME280_I2C_ADDR, BME280_REG_CTRL_MEAS, &ctrl_meas, 1);
 }
 
 
@@ -196,7 +208,8 @@ int bme280_trigger_measurement(bme280_t *dev)
     }
 
     // Read current ctrl_meas register
-    int ret = I2C1_read(BME280_I2C_ADDR, BME280_REG_CTRL_MEAS, &ctrl_meas, 1);
+//    int ret = I2C1_read(BME280_I2C_ADDR, BME280_REG_CTRL_MEAS, &ctrl_meas, 1);
+    int ret = I2Cx_read(I2C1, BME280_I2C_ADDR, BME280_REG_CTRL_MEAS, &ctrl_meas, 1);
     if (ret != BME280_OK) {
         return ret;
     }
@@ -206,7 +219,8 @@ int bme280_trigger_measurement(bme280_t *dev)
     ctrl_meas |= BME280_FORCED_MODE;
 
     // Write back to trigger measurement
-    return I2C1_write(BME280_I2C_ADDR, BME280_REG_CTRL_MEAS, &ctrl_meas, 1);
+//    return I2C1_write(BME280_I2C_ADDR, BME280_REG_CTRL_MEAS, &ctrl_meas, 1);
+    return I2Cx_write(I2C1, BME280_I2C_ADDR, BME280_REG_CTRL_MEAS, &ctrl_meas, 1);
 }
 
 
@@ -291,7 +305,8 @@ int bme280_read_averaged_measurements(bme280_t *dev, float *temperature, float *
  */
 static int bme280_is_measuring(bme280_t *dev) {
     uint8_t status;
-    int ret = I2C1_read(BME280_I2C_ADDR, BME280_REG_STATUS, &status, 1);
+//    int ret = I2C1_read(BME280_I2C_ADDR, BME280_REG_STATUS, &status, 1);
+    int ret = I2Cx_read(I2C1, BME280_I2C_ADDR, BME280_REG_STATUS, &status, 1);
     if (ret != BME280_OK) {
         return ret;
     }
@@ -335,7 +350,8 @@ static int bme280_read_raw_data(bme280_t *dev, int32_t *raw_temp, int32_t *raw_h
     int ret;
 
     // Read all data registers (pressure MSB to humidity LSB)
-    ret = I2C1_read(BME280_I2C_ADDR, BME280_REG_PRESS_MSB, data, 8);
+//    ret = I2C1_read(BME280_I2C_ADDR, BME280_REG_PRESS_MSB, data, 8);
+    ret = I2Cx_read(I2C1, BME280_I2C_ADDR, BME280_REG_PRESS_MSB, data, 8);
     if (ret != BME280_OK) {
         return ret;
     }

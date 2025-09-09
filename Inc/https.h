@@ -2,7 +2,10 @@
  * https.h
  *
  *  Created on: May 24, 2025
- *      Author: grego
+ *      Author: Nikolaos Grigoriadis
+ *      Email : n.grigoriadis09@gmail.com
+ *      Title : Embedded software engineer
+ *      Degree: BSc and MSc in computer science, university of Ioannina
  */
 
 #ifndef HTTPS_H_

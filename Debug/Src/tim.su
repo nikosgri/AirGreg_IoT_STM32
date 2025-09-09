@@ -1,5 +1,5 @@
-/home/grego/STM32CubeIDE/workspace/STM32L0_Wi-Fi/CMSIS/Include/core_cm0plus.h:741:22:__NVIC_EnableIRQ	16	static
-/home/grego/STM32CubeIDE/workspace/STM32L0_Wi-Fi/CMSIS/Include/core_cm0plus.h:848:22:__NVIC_SetPriority	24	static
+/home/grego/STM32CubeIDE/Personal/embedded_device/CMSIS/Include/core_cm0plus.h:741:22:__NVIC_EnableIRQ	16	static
+/home/grego/STM32CubeIDE/Personal/embedded_device/CMSIS/Include/core_cm0plus.h:848:22:__NVIC_SetPriority	24	static
 ../Src/tim.c:20:6:tim2_init	8	static
 ../Src/tim.c:50:6:tim2_start_it	8	static
 ../Src/tim.c:65:6:tim2_stop_it	8	static

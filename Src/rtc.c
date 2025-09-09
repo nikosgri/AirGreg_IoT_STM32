@@ -331,8 +331,10 @@ int RTC_set_alarm(uint32_t total_seconds)
     current_minutes = _RTC_convert_bcd2bin(_RTC_get_minute());
     current_seconds = _RTC_convert_bcd2bin(_RTC_get_second());
 
+#ifdef DEBUG_SYSTEM
     /* Debug current time */
     LOG_INF("Current Time: %02d:%02d:%02d", current_hours, current_minutes, current_seconds);
+#endif
 
     /* Convert total_seconds to HH:MM:SS format */
     uint32_t added_hours = total_seconds / 3600;
@@ -369,9 +371,10 @@ int RTC_set_alarm(uint32_t total_seconds)
     uint8_t bcd_alarm_minute = _RTC_convert_bin2bcd(alarm_minutes);
     uint8_t bcd_alarm_second = _RTC_convert_bin2bcd(alarm_seconds);
 
+#ifdef DEBUG_SYSTEM
     /* Debug alarm time */
     LOG_INF("Alarm Time: %02X:%02X:%02X", bcd_alarm_hour, bcd_alarm_minute, bcd_alarm_second);
-
+#endif
     /* Set the Alarm A registers */
     RTC->ALRMAR = (bcd_alarm_second |
                   (bcd_alarm_minute << 8) |
@@ -423,10 +426,10 @@ uint32_t RTC_get_timestamp(void)
     uint32_t hour   = _RTC_convert_bcd2bin(_RTC_get_hour());
     uint32_t minute = _RTC_convert_bcd2bin(_RTC_get_minute());
     uint32_t second = _RTC_convert_bcd2bin(_RTC_get_second());
-
+#ifdef DEBUG_SYSTEM
     LOG_INF("Unix timestamp: %04lu-%02lu-%02lu %02lu:%02lu:%02lu\n",
             year, month, day, hour, minute, second);
-
+#endif
     // Basic validation
     if (month < 1 || month > 12 || day < 1 || day > 31 ||
         hour > 23 || minute > 59 || second > 59 || year < 1970) {

@@ -19,6 +19,7 @@
 #include <rtc.h>
 #include <swo.h>
 #include <low_level_com.h>
+#include <modem.h>
 
 
 /*Define maximum command size*/
@@ -67,25 +68,12 @@ typedef struct nucleo nucleoType;
 
 /*Extern variable declaration*/
 extern nucleoType node;
-#if defined(BLE_SYNC)
-extern char ssid[30];
-extern char pswd[30];
-#endif
 
 /*Function prototypes*/
-void WiFi_status(void);
-WiFi_res_t send_command(const char *command, const char *exp, const char *exp_parse, const char *exp_end, uint32_t num_of_exp, uint32_t delay, ...);
-WiFi_res_t WiFi_init();
-WiFi_res_t WiFi_ntp_init(rtcType time);
-WiFi_res_t WiFi_check(void);
-WiFi_res_t WiFi_get_IMEI();
-WiFi_res_t WiFi_get_RSSI();
-WiFi_res_t WiFi_open_connection(const char * server_ip, int port_number);
-WiFi_res_t WiFi_close_connection();
-WiFi_res_t WiFi_send_udp();
-WiFi_res_t WiFi_power_down();
-void WiFi_frame_format();
-WiFi_res_t WiFi_receive_data(char * response);
+void wifi_get_connection_status(void);
+WiFi_res_t wifi_register_online();
+WiFi_res_t wifi_update_time(rtcType time);
+void wifi_frame_format();
 int _get_wifi_state(void);
 
 

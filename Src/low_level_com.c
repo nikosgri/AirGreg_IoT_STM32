@@ -2,7 +2,10 @@
  * low_level_com.c
  *
  *  Created on: May 20, 2025
- *      Author: grego
+ *      Author: Nikolaos Grigoriadis
+ *      Email : n.grigoriadis09@gmail.com
+ *      Title : Embedded software engineer
+ *      Degree: BSc and MSc in computer science, university of Ioannina
  */
 
 
@@ -136,76 +139,117 @@
 //    return response; // Return the final response status
 //}
 
-low_level_communication_state_t send_command_wait_result(
-    const char *command,
-    const char *exp,
-    const char *exp_parse,
-    const char *exp_end,
-    uint32_t num_of_exp,
-    uint32_t delay,
-    ...)
-{
-    char response_buffer[SIZE_OF_INCOMING_DATA] = {0};
-    char command_to_send[strlen(command) + 3];
-    int response = -1;
-    uint32_t start_time = get_tick();
+//low_level_communication_state_t send_command_wait_result( const char *command,  const char *exp, const char *exp_parse,
+//    const char *exp_end, uint32_t num_of_exp, uint32_t delay, ...)
+//{
+//	/* Local variables */
+//	char response_buffer[SIZE_OF_INCOMING_DATA];
+//    char command_to_send[strlen(command) + 3];
+//    bool is_expression_parsed = false;
+//    uint32_t start_time = get_tick();
+//    bool send_command = true;
+//    int response = -1;
+//
+//
+//    /* Clear UART buffer */
+//	memset(response_buffer, 0, sizeof(response_buffer)); // Clear the response buffer
+//	memset(uart_receive_buffer, 0, sizeof(uart_receive_buffer)); // Clear the UART receive buffer
+//	memset(command_to_send, 0, sizeof(command_to_send)); // Clear the command buffer
+//	uart_receive_index = 0; // Reset UART receive index
+//
+//
+//#ifdef DEBUG_SYSTEM
+//    printf("\n>>>>Command: %s\r\n", command);
+//#endif
+//
+//    while (response < 0)
+//    {
+//
+//    	/* Handle timeout events */
+//        if ((get_tick() - start_time) >= delay) {
+//#ifdef DEBUG_SYSTEM
+//            LOG_WRN("Timeout occurred");
+//#endif
+//            return LL_TIMEOUT;
+//        }
+//
+//        if (send_command)
+//        {
+//			if (command != NULL) {
+//				/* Format and send the command */
+//				snprintf(command_to_send, sizeof(command_to_send), "%s\r\n", command); // Format the command with newline
+//				uart1_transmit(command_to_send, strlen(command_to_send)); // Transmit the command via UART
+//				send_command = false;
+//			} else {
+//				continue; // There is no need of sending a command
+//			}
+//		}
+//
+//		/* Check if the expression is found */
+//		char *index_of_expr = strstr(uart_receive_buffer, exp);
+//
+//		if (index_of_expr != NULL) // Found the expected expression from sensor response.
+//		{
+//			strncpy(response_buffer, uart_receive_buffer, sizeof(response_buffer) - 1); // Copy response to buffer
+//
+//			if (exp_parse == NULL) // No need to parse something
+//			{
+//				response = LL_OK;
+//			}
+//			else if (exp_parse != NULL) // Parse the expression based on user input
+//			{
+//				char *expr_start = strstr(uart_receive_buffer, exp);
+//				if (expr_start != NULL)
+//				{
+//					if (!is_expression_parsed)
+//					{
+//						expr_start += strlen(exp);  // Move past the expected string
+//						va_list args;
+//						va_start(args, delay);
+//						/* Use vsscanf to read the variadic arguments */
+//						int extracted_data = vsscanf(expr_start, exp_parse, args);
+//						va_end(args);
+//
+//						if (extracted_data == num_of_exp)
+//						{
+//							is_expression_parsed = true;
+//						}
+//					}
+//					else if (is_expression_parsed)
+//					{
+//						/* Check if there is an end expression that the user waits for */
+//						if (exp_end != NULL)
+//						{
+//							char *index_of_expr_end = strstr(uart_receive_buffer, exp_end);
+//							if (index_of_expr_end != NULL)
+//							{
+//								response = LL_OK;
+//							}
+//							continue;
+//						}
+//						else if (exp_end == NULL)
+//						{
+//							response = LL_OK;
+//						}
+//					}
+//				}
+//			}
+//		}
+//        else if (strstr(uart_receive_buffer, "ERROR") || strstr(uart_receive_buffer, "busy"))
+//        {
+//            /* Try to send the command again */
+//        	send_command = true;
+//        }
+//    }
+//
+//#ifdef DEBUG_SYSTEM
+//    printf("%s\r\n<<<<\r\n", uart_receive_buffer);
+//#endif
+//
+//    return response;
+//}
 
-    // Clear UART buffer
-    memset(uart_receive_buffer, 0, sizeof(uart_receive_buffer));
-    uart_receive_index = 0;
 
-    // Format and send command
-    snprintf(command_to_send, sizeof(command_to_send), "%s\r\n", command);
-    uart1_transmit(command_to_send, strlen(command_to_send));
 
-#ifdef DEBUG_SYSTEM
-    printf("\n>>>>Command: %s\r\n", command);
-#endif
 
-    while (response < 0) {
-        if ((get_tick() - start_time) >= delay) {
-#ifdef DEBUG_SYSTEM
-            LOG_WRN("Timeout occurred");
-#endif
-            return LL_TIMEOUT;
-        }
-
-        if (strstr(uart_receive_buffer, "ERROR")) {
-            return LL_ERROR;
-        }
-
-        if (exp && strstr(uart_receive_buffer, exp)) {
-            if (exp_parse && num_of_exp > 0) {
-                char *start = strstr(uart_receive_buffer, exp);
-                if (start) {
-                    start += strlen(exp);
-
-                    va_list args;
-                    va_start(args, delay);
-                    int parsed = vsscanf(start, exp_parse, args);
-                    va_end(args);
-
-                    if (parsed == num_of_exp) {
-                        if (!exp_end || strstr(uart_receive_buffer, exp_end)) {
-                            response = LL_OK;
-                        }
-                    }
-                }
-            } else {
-                if (!exp_end || strstr(uart_receive_buffer, exp_end)) {
-                    response = LL_OK;
-                }
-            }
-        } else if (!exp && exp_end && strstr(uart_receive_buffer, exp_end)) {
-            response = LL_OK;
-        }
-        delay_ms(1);
-    }
-
-#ifdef DEBUG_SYSTEM
-    printf("%s\r\n<<<<\r\n", uart_receive_buffer);
-#endif
-
-    return response;
-}
 

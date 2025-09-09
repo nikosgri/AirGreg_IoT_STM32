@@ -22,33 +22,14 @@ volatile uint8_t message_complete = 0;                  // Indicates end of rece
  * @function uart2_init
  *
  * @brief Initialize USART2 peripheral for printing data to serial monitor.
- * @note PA2->TX, PA3->RX Both AF4.
  */
 void uart2_init(void)
 {
 	/*Variable declaration*/
 	int usart_div = 0;
 
-	/*Enable clock access to GPIO port A*/
-	RCC->IOPENR |= RCC_IOPENR_GPIOAEN;
-
-	/****** PIN CONFIGURATION ******/
-
-	/*Set TX pin as alternate function mode*/
-	GPIOA->MODER |= GPIO_MODER_MODE2_1;
-	GPIOA->MODER &= ~GPIO_MODER_MODE2_0;
-
-	/*Define Alternate function type*/
-	MODIFY_REG(GPIOA->AFR[0], GPIO_AFRL_AFSEL2, (0x04 << GPIO_AFRL_AFSEL2_Pos));
-
-	/*Set RX pin as alternate function mode*/
-	GPIOA->MODER |= GPIO_MODER_MODE3_1;
-	GPIOA->MODER &= ~GPIO_MODER_MODE3_0;
-
-	/*Define alternate function type*/
-	MODIFY_REG(GPIOA->AFR[0], GPIO_AFRL_AFSEL3, (0x04 << GPIO_AFRL_AFSEL3_Pos));
-
-	/****** PERIPHERAL CONFIGURATION ******/
+	/*Initialize GPIO pins for UART2*/
+	USART2_gpio_init();
 
 	/*Enable clock access to USART2 peripheral*/
 	RCC->APB1ENR |= RCC_APB1ENR_USART2EN;

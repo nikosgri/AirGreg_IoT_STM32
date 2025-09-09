@@ -34,34 +34,34 @@ $(wildcard ../makefile.init) \
 $(wildcard ../makefile.targets) \
 
 
-BUILD_ARTIFACT_NAME := STM32L0_Wi-Fi
+BUILD_ARTIFACT_NAME := embedded_device
 BUILD_ARTIFACT_EXTENSION := elf
 BUILD_ARTIFACT_PREFIX :=
 BUILD_ARTIFACT := $(BUILD_ARTIFACT_PREFIX)$(BUILD_ARTIFACT_NAME)$(if $(BUILD_ARTIFACT_EXTENSION),.$(BUILD_ARTIFACT_EXTENSION),)
 
 # Add inputs and outputs from these tool invocations to the build variables 
 EXECUTABLES += \
-STM32L0_Wi-Fi.elf \
+embedded_device.elf \
 
 MAP_FILES += \
-STM32L0_Wi-Fi.map \
+embedded_device.map \
 
 SIZE_OUTPUT += \
 default.size.stdout \
 
 OBJDUMP_LIST += \
-STM32L0_Wi-Fi.list \
+embedded_device.list \
 
 
 # All Target
 all: main-build
 
 # Main-build Target
-main-build: STM32L0_Wi-Fi.elf secondary-outputs
+main-build: embedded_device.elf secondary-outputs
 
 # Tool invocations
-STM32L0_Wi-Fi.elf STM32L0_Wi-Fi.map: $(OBJS) $(USER_OBJS) /home/grego/STM32CubeIDE/workspace/STM32L0_Wi-Fi/STM32L053R8TX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "STM32L0_Wi-Fi.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m0plus -T"/home/grego/STM32CubeIDE/workspace/STM32L0_Wi-Fi/STM32L053R8TX_FLASH.ld" --specs=nosys.specs -Wl,-Map="STM32L0_Wi-Fi.map" -Wl,--gc-sections -static -u _printf_float --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+embedded_device.elf embedded_device.map: $(OBJS) $(USER_OBJS) /home/grego/STM32CubeIDE/Personal/embedded_device/STM32L053R8TX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "embedded_device.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m0plus -T"/home/grego/STM32CubeIDE/Personal/embedded_device/STM32L053R8TX_FLASH.ld" --specs=nosys.specs -Wl,-Map="embedded_device.map" -Wl,--gc-sections -static -u _printf_float --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
@@ -70,14 +70,14 @@ default.size.stdout: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
 	@echo 'Finished building: $@'
 	@echo ' '
 
-STM32L0_Wi-Fi.list: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-objdump -h -S $(EXECUTABLES) > "STM32L0_Wi-Fi.list"
+embedded_device.list: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-objdump -h -S $(EXECUTABLES) > "embedded_device.list"
 	@echo 'Finished building: $@'
 	@echo ' '
 
 # Other Targets
 clean:
-	-$(RM) STM32L0_Wi-Fi.elf STM32L0_Wi-Fi.list STM32L0_Wi-Fi.map default.size.stdout
+	-$(RM) default.size.stdout embedded_device.elf embedded_device.list embedded_device.map
 	-@echo ' '
 
 secondary-outputs: $(SIZE_OUTPUT) $(OBJDUMP_LIST)

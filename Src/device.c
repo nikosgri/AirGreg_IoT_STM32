@@ -2,7 +2,10 @@
  * device.c
  *
  *  Created on: Feb 20, 2025
- *      Author: grego
+ *      Author: Nikolaos Grigoriadis
+ *      Email : n.grigoriadis09@gmail.com
+ *      Title : Embedded software engineer
+ *      Degree: BSc and MSc in computer science, university of Ioannina
  */
 
 

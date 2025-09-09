@@ -22,6 +22,8 @@ int __io_putchar(int ch)
 }
 
 static void log_message(const char *level, const char *format, va_list args);
+
+
 void LOG_INF(const char *msg, ...) {
     va_list args;
     va_start(args, msg);
