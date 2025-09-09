@@ -15,6 +15,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <lcd204a.h>
+#include <gpio.h>
 
 
 void I2C1_init(void);
@@ -23,4 +24,11 @@ int I2C1_write(uint8_t dev_addr, uint8_t reg_addr, const uint8_t *data, uint8_t 
 void I2C1_read_byte(uint8_t address, uint8_t *data);
 int I2C1_read(uint8_t dev_addr, uint8_t reg_addr, uint8_t *buffer, uint8_t size);
 void I2C1_scan_bus(void);
+
+void I2Cx_write_byte(I2C_TypeDef *i2c, uint8_t address, uint8_t data);
+void I2Cx_read_byte(I2C_TypeDef *i2c, uint8_t address, uint8_t *data);
+void I2Cx_scan_bus(I2C_TypeDef *i2c);
+int I2Cx_write(I2C_TypeDef *i2c, uint8_t dev_addr, uint8_t reg_addr, const uint8_t *data, uint8_t size);
+int I2Cx_read(I2C_TypeDef *i2c, uint8_t dev_addr, uint8_t reg_addr, uint8_t *buffer, uint8_t size);
+
 #endif /* I2C_H_ */
