@@ -331,10 +331,6 @@ modem_status_t send_command(const char *command, const char *exp, const char *ex
     memset(command_to_send, 0, sizeof(command_to_send)); // Clear the command buffer
     uart_receive_index = 0; // Reset UART receive index
 
-//    /*Enable USART interrupt*/
-//    if (device.flg.uart_handle)
-//    	uart1_enable_rx_interrupt();
-
     /* Format and send the command */
     if (command != NULL || command[0] != '\0') {
     	snprintf(command_to_send, sizeof(command_to_send), "%s\r\n", command); // Format the command with newline
@@ -396,9 +392,7 @@ modem_status_t send_command(const char *command, const char *exp, const char *ex
     	printf("%s\r\n", response_buffer); // Print the response buffer
     }
 #endif
-//    /*Disable UART interrupt*/
-//    if (device.flg.uart_handle)
-//    	uart1_disable_rx_interrupt();
+
 
 #ifdef DEBUG_SYSTEM
     printf("<<<<");
