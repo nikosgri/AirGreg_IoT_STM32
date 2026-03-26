@@ -119,6 +119,9 @@ int main(void)
     /* Initialize time base system, with 1ms interrupt */
     systick_init(SYSTEM_CORE_CLOCK/1000);
 
+    /*Enable WatchDog timer*/
+    iwdg_init();
+
     /* Initialize UART2 peripheral for printing data to serial port */
     uart2_init();
 
@@ -131,6 +134,12 @@ int main(void)
     {
     	/* HSI is system clock */
         LOG_INF("System clock is configured to 16MHz");
+    }
+
+    /*Check if WD reset occurred*/
+    if ((RCC->CSR & RCC_CSR_IWDGRSTF) == RCC_CSR_IWDGRSTF)
+    {
+        LOG_INF("Watchdog reset occurred");
     }
 #endif
 
@@ -156,6 +165,8 @@ int main(void)
     device.clear_flags = 0;
     device.flg.first_time = 1;
     sequence_number = 0;
+
+    while(1) {}
 
     /* Test device peripherals */
     initiate_testing();
@@ -184,6 +195,14 @@ int main(void)
 
 			/*Increase the packet number*/
 			sequence_number = (sequence_number + 1) % 10000; //Wrap around if you reach 1000 packets.
+
+			/*Set the alarm in seconds*/
+			RTC_set_alarm(keep_alive);
+
+#ifdef DEBUG_SYSTEM
+	        LOG_INF("Going to sleep");
+	        LOG_INF("Keep alive message in %d sec - %d min", keep_alive, (keep_alive/60));
+#endif
 		}
 
 
@@ -203,14 +222,6 @@ int main(void)
         	https_set_headers(DATABASE_HEADERS);
 			device.flg.ble_conn = 0;
         }
-#endif
-
-		/*Set the alarm in seconds*/
-		RTC_set_alarm(keep_alive);
-
-#ifdef DEBUG_SYSTEM
-        LOG_INF("Going to sleep");
-        LOG_INF("Keep alive message in %d sec - %d min", keep_alive, (keep_alive/60));
 #endif
 
         /*Avoid conflicts with low power mode*/
