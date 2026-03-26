@@ -16,8 +16,6 @@
 uint32_t current_tick = 0;
 
 /**
- * @function systick_init
- *
  * @brief Enable systick timer with interrupt mode.
  * @param load_val: The starting counting value, which eventually goes down to zero.
  * @retval None.
@@ -47,8 +45,6 @@ void systick_init(uint32_t load_val)
 }
 
 /**
- * @function tick_increment
- *
  * @brief This function increases current system ticks.
  * @retval None.
  */
@@ -58,8 +54,6 @@ void tick_increment()
 }
 
 /**
- * @function get_tick
- *
  * @brief returns Current tick event.
  * @retval current tick.
  */
@@ -81,8 +75,6 @@ uint32_t get_tick()
 }
 
 /**
- * @function delay_ms
- *
  * @brief delay in milliseconds.
  * @param delay: Total ms to wait.
  * @retval None.
@@ -101,4 +93,39 @@ void delay_ms(uint32_t delay)
 
     /*Wait until delay occurs*/
     while ((get_tick() - start_time) < wait_time) {}
+}
+
+
+/**
+ * @brief Enables WD timer for safety protection.
+ */
+void iwdg_init(void)
+{
+	/*Enable IWDG*/
+	IWDG->KR = 0x0000CCCC;
+
+	/*Enable register access*/
+	IWDG->KR = 0x00005555;
+
+	/*Set the IWDG prescaler*/
+	MODIFY_REG(IWDG->PR, IWDG_PR_PR, (0x06 << IWDG_PR_PR_Pos));
+
+	/*Set the reload register to the largest value*/
+	IWDG->RLR = 0xFFF;
+
+	/*Wait for registers to be updated*/
+	while ((IWDG->SR & (IWDG_SR_PVU | IWDG_SR_RVU | IWDG_SR_WVU)) != 0) {}
+
+	/*Refresh watch dog*/
+	IWDG->KR = 0x0000AAAA;
+}
+
+
+/**
+ * @brief Refresh the WD counter
+ */
+void iwdg_refresh(void)
+{
+	/*Refresh watch dog*/
+	IWDG->KR = 0x0000AAAA;
 }
