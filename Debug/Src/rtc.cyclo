@@ -1,4 +1,4 @@
-/home/grego/STM32CubeIDE/Personal/embedded_device/CMSIS/Include/core_cm0plus.h:741:22:__NVIC_EnableIRQ	2
+/home/grego/STM32CubeIDE/vn/embedded_device/CMSIS/Include/core_cm0plus.h:741:22:__NVIC_EnableIRQ	2
 ../Src/rtc.c:32:5:rtc_init	9
 ../Src/rtc.c:133:10:_RTC_get_date	1
 ../Src/rtc.c:143:10:_RTC_get_year	1

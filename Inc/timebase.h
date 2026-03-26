@@ -23,5 +23,7 @@ void systick_init(uint32_t load_val);
 void tick_increment();
 uint32_t get_tick();
 void delay_ms(uint32_t delay);
+void iwdg_init(void);
+void iwdg_refresh(void);
 
 #endif /* TIMEBASE_H_ */

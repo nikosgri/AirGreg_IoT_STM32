@@ -1,5 +1,5 @@
-/home/grego/STM32CubeIDE/Personal/embedded_device/CMSIS/Include/core_cm0plus.h:741:22:__NVIC_EnableIRQ	2
-/home/grego/STM32CubeIDE/Personal/embedded_device/CMSIS/Include/core_cm0plus.h:848:22:__NVIC_SetPriority	2
+/home/grego/STM32CubeIDE/vn/embedded_device/CMSIS/Include/core_cm0plus.h:741:22:__NVIC_EnableIRQ	2
+/home/grego/STM32CubeIDE/vn/embedded_device/CMSIS/Include/core_cm0plus.h:848:22:__NVIC_SetPriority	2
 ../Src/device.c:24:6:pulse1_init	1
 ../Src/device.c:72:6:CircularBuffer_Init	1
 ../Src/device.c:85:6:CircularBuffer_IsEmpty	1
