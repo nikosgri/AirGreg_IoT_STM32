@@ -1,5 +1,0 @@
-../Src/wifi.c:31:12:wifi_register_online	17
-../Src/wifi.c:144:12:wifi_update_time	5
-../Src/wifi.c:195:6:wifi_get_connection_status	2
-../Src/wifi.c:215:6:wifi_frame_format	1
-../Src/wifi.c:238:17:_extract_month	3

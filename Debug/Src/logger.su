@@ -1,6 +1,0 @@
-../Src/logger.c:21:5:__io_putchar	16	static
-../Src/logger.c:30:6:LOG_INF	16	static
-../Src/logger.c:37:6:LOG_ERR	16	static
-../Src/logger.c:44:6:LOG_WRN	16	static
-../Src/logger.c:51:6:LOG_VRB	16	static
-../Src/logger.c:58:13:log_message	312	static

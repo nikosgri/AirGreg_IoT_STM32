@@ -1,3 +1,0 @@
-../Src/pwr.c:22:6:enter_SleepMode	8	static,ignoring_inline_asm
-../Src/pwr.c:54:6:prepare_LowPower	8	static
-../Src/pwr.c:69:6:mcu_WakeUp	8	static

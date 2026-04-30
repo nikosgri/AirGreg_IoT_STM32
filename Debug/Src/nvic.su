@@ -1,6 +1,0 @@
-../Src/nvic.c:23:6:USART1_IRQHandler	8	static
-../Src/nvic.c:39:6:RTC_IRQHandler	8	static
-../Src/nvic.c:57:6:EXTI4_15_IRQHandler	8	static
-../Src/nvic.c:70:6:TIM2_IRQHandler	16	static
-../Src/nvic.c:127:6:HardFault_Handler	16	static
-../Src/nvic.c:146:6:SysTick_Handler	8	static

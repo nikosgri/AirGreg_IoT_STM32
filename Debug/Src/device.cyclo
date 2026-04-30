@@ -1,8 +1,0 @@
-/home/grego/STM32CubeIDE/workspace/AirGreg_IoT_STM32/CMSIS/Include/core_cm0plus.h:741:22:__NVIC_EnableIRQ	2
-/home/grego/STM32CubeIDE/workspace/AirGreg_IoT_STM32/CMSIS/Include/core_cm0plus.h:848:22:__NVIC_SetPriority	2
-../Src/device.c:24:6:pulse1_init	1
-../Src/device.c:72:6:CircularBuffer_Init	1
-../Src/device.c:85:6:CircularBuffer_IsEmpty	1
-../Src/device.c:96:6:CircularBuffer_IsFull	1
-../Src/device.c:111:6:CircularBuffer_Push	2
-../Src/device.c:135:6:CircularBuffer_Pop	2
