@@ -13,7 +13,7 @@
 
 #include <main.h>
 #include <stdbool.h>
-#include <swo.h>
+#include <logger.h>
 #include <time.h>
 
 #define UNLOCK_KEY_1               0xCA

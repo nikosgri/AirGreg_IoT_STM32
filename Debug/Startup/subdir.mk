@@ -16,7 +16,7 @@ OBJS += \
 
 # Each subdirectory must supply rules for building sources it contributes
 Startup/%.o: ../Startup/%.s Startup/subdir.mk
-	arm-none-eabi-gcc -mcpu=cortex-m0plus -g3 -DDEBUG -c -I"/home/grego/STM32CubeIDE/vn/embedded_device/Peripherals" -I"/home/grego/STM32CubeIDE/vn/embedded_device/Peripherals/Src" -I"/home/grego/STM32CubeIDE/vn/embedded_device/Peripherals/Inc" -I"/home/grego/STM32CubeIDE/vn/embedded_device/CMSIS" -I"/home/grego/STM32CubeIDE/vn/embedded_device/Common" -x assembler-with-cpp -MMD -MP -MF"$(@:%.o=%.d)" -MT"$@" --specs=nano.specs -mfloat-abi=soft -mthumb -o "$@" "$<"
+	arm-none-eabi-gcc -mcpu=cortex-m0plus -g3 -DDEBUG -c -I"/home/grego/STM32CubeIDE/workspace/AirGreg_IoT_STM32/Peripherals" -I"/home/grego/STM32CubeIDE/workspace/AirGreg_IoT_STM32/Peripherals/Src" -I"/home/grego/STM32CubeIDE/workspace/AirGreg_IoT_STM32/Peripherals/Inc" -I"/home/grego/STM32CubeIDE/workspace/AirGreg_IoT_STM32/CMSIS" -x assembler-with-cpp -MMD -MP -MF"$(@:%.o=%.d)" -MT"$@" --specs=nano.specs -mfloat-abi=soft -mthumb -o "$@" "$<"
 
 clean: clean-Startup
 

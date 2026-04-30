@@ -12,7 +12,6 @@
 #define HTTPS_H_
 
 #include "main.h"
-#include "low_level_com.h"
 #include "ctype.h"
 
 

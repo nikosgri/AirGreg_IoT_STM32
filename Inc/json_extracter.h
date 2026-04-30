@@ -14,7 +14,7 @@
 
 #include <main.h>
 #include <jsmn.h>
-#include <swo.h>
+#include <logger.h>
 
 #define TOKEN_SIZE 256  /**< Defines the maximum number of tokens for the JSON parsing */
 

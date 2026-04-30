@@ -12,8 +12,15 @@
 #define DEFINES_H_
 
 
+
 #define MANUAL_SYNC
 //#define BLE_SYNC
 /*Enable debugging*/
 #define DEBUG_SYSTEM
+
+
+
+
+
+
 #endif /* DEFINES_H_ */

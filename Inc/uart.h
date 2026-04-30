@@ -13,6 +13,7 @@
 
 #include <stdint.h>
 #include <main.h>
+#include <gpio.h>
 #include <stm32l0xx.h>
 #include <stm32l053xx.h>
 

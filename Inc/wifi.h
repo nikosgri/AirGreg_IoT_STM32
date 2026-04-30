@@ -17,8 +17,7 @@
 #include <stdbool.h>
 #include <timebase.h>
 #include <rtc.h>
-#include <swo.h>
-#include <low_level_com.h>
+#include <logger.h>
 #include <modem.h>
 
 

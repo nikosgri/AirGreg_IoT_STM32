@@ -1,5 +1,5 @@
-/home/grego/STM32CubeIDE/vn/embedded_device/CMSIS/Include/core_cm0plus.h:741:22:__NVIC_EnableIRQ	2
-/home/grego/STM32CubeIDE/vn/embedded_device/CMSIS/Include/core_cm0plus.h:848:22:__NVIC_SetPriority	2
+/home/grego/STM32CubeIDE/workspace/AirGreg_IoT_STM32/CMSIS/Include/core_cm0plus.h:741:22:__NVIC_EnableIRQ	2
+/home/grego/STM32CubeIDE/workspace/AirGreg_IoT_STM32/CMSIS/Include/core_cm0plus.h:848:22:__NVIC_SetPriority	2
 ../Src/uart.c:26:6:uart2_init	1
 ../Src/uart.c:63:6:uart1_init	1
 ../Src/uart.c:129:6:uart_transmit_byte	3

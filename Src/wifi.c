@@ -38,14 +38,14 @@ WiFi_res_t wifi_register_online(void)
     result_code = modem_is_accessible();
     if (result_code != WIFI_OK)
     {
-#ifdef DEBUG_SYSTEM
         LOG_WRN("WiFi module isn't accessible");
-#endif
     }
 
     /*Check the connection status*/
     if (device.flg.ble_conn == 0 || node.connection_status != CONNECTED || device.flg.first_time)
     {
+    	LOG_INF("Start Connecting Online...");
+
         /*Initialize WiFi driver*/
         result_code = send_command("AT+CWINIT=1", NULL, NULL, "OK", 0, 1000);
         if (result_code != WIFI_OK)
@@ -118,12 +118,10 @@ WiFi_res_t wifi_register_online(void)
         return result_code;
     }
 
-#ifdef DEBUG_SYSTEM
     LOG_INF("BOARDS IP ADDRESS...");
     LOG_INF("%s", node.board_ip);
     device.flg.isConnected = 1;
     printf("%c%c%c%c", RETURN, NEWLINE, RETURN, NEWLINE);
-#endif
 
 
     /*show the remote host and port in “+IPD” and “+CIPRECVDATA” messages.*/
@@ -205,9 +203,7 @@ void wifi_get_connection_status(void)
 
     if (result_code != 0)
     {
-#ifdef DEBUG_SYSTEM
-        LOG_WRN("Something went wrong while quering the WiFi connection status");
-#endif
+        LOG_WRN("Something went wrong while querying the WiFi connection status");
     }
 
 }

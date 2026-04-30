@@ -12,7 +12,7 @@
 #define DEVICE_H_
 
 #include "rtc.h"
-#include "swo.h"
+#include "logger.h"
 #include "main.h"
 #include "stdbool.h"
 

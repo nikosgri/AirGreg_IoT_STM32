@@ -58,34 +58,34 @@ $(wildcard ../makefile.init) \
 $(wildcard ../makefile.targets) \
 
 
-BUILD_ARTIFACT_NAME := embedded_device
+BUILD_ARTIFACT_NAME := AirGreg_IoT_STM32
 BUILD_ARTIFACT_EXTENSION := elf
 BUILD_ARTIFACT_PREFIX :=
 BUILD_ARTIFACT := $(BUILD_ARTIFACT_PREFIX)$(BUILD_ARTIFACT_NAME)$(if $(BUILD_ARTIFACT_EXTENSION),.$(BUILD_ARTIFACT_EXTENSION),)
 
 # Add inputs and outputs from these tool invocations to the build variables 
 EXECUTABLES += \
-embedded_device.elf \
+AirGreg_IoT_STM32.elf \
 
 MAP_FILES += \
-embedded_device.map \
+AirGreg_IoT_STM32.map \
 
 SIZE_OUTPUT += \
 default.size.stdout \
 
 OBJDUMP_LIST += \
-embedded_device.list \
+AirGreg_IoT_STM32.list \
 
 
 # All Target
 all: main-build
 
 # Main-build Target
-main-build: embedded_device.elf secondary-outputs
+main-build: AirGreg_IoT_STM32.elf secondary-outputs
 
 # Tool invocations
-embedded_device.elf embedded_device.map: $(OBJS) $(USER_OBJS) /home/grego/STM32CubeIDE/vn/embedded_device/STM32L053R8TX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-g++ -o "embedded_device.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m0plus -T"/home/grego/STM32CubeIDE/vn/embedded_device/STM32L053R8TX_FLASH.ld" -Wl,-Map="embedded_device.map" -Wl,--gc-sections -static -u _printf_float --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -lstdc++ -lsupc++ -Wl,--end-group
+AirGreg_IoT_STM32.elf AirGreg_IoT_STM32.map: $(OBJS) $(USER_OBJS) /home/grego/STM32CubeIDE/workspace/AirGreg_IoT_STM32/STM32L053R8TX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-g++ -o "AirGreg_IoT_STM32.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m0plus -T"/home/grego/STM32CubeIDE/workspace/AirGreg_IoT_STM32/STM32L053R8TX_FLASH.ld" -Wl,-Map="AirGreg_IoT_STM32.map" -Wl,--gc-sections -static -u _printf_float --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -lstdc++ -lsupc++ -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
@@ -94,14 +94,14 @@ default.size.stdout: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
 	@echo 'Finished building: $@'
 	@echo ' '
 
-embedded_device.list: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-objdump -h -S $(EXECUTABLES) > "embedded_device.list"
+AirGreg_IoT_STM32.list: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-objdump -h -S $(EXECUTABLES) > "AirGreg_IoT_STM32.list"
 	@echo 'Finished building: $@'
 	@echo ' '
 
 # Other Targets
 clean:
-	-$(RM) default.size.stdout embedded_device.elf embedded_device.list embedded_device.map
+	-$(RM) AirGreg_IoT_STM32.elf AirGreg_IoT_STM32.list AirGreg_IoT_STM32.map default.size.stdout
 	-@echo ' '
 
 secondary-outputs: $(SIZE_OUTPUT) $(OBJDUMP_LIST)

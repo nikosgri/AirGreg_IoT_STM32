@@ -13,7 +13,7 @@
 *
 * @param server_ip Server IP address.
 * @param port_number Server port number.
-* @retval MODEM_OK on success, or error codes on failure
+* @retval MODEM_OK on success, MODEM_ERROR otherwise.
 */
 modem_status_t modem_open_connection(const char * server_ip, int port_number)
 {
@@ -29,9 +29,8 @@ modem_status_t modem_open_connection(const char * server_ip, int port_number)
     /*Check the connection*/
     if (status != CONNECTED)
     {
-#ifdef DEBUG_SYSTEM
         LOG_WRN("UDP connection has been lost, modem status %d\n", result_code);
-#endif
+
         return MODEM_ERROR;
     }
 
@@ -40,11 +39,9 @@ modem_status_t modem_open_connection(const char * server_ip, int port_number)
 	result_code = send_command(command, "CONNECT", NULL, "OK", 0, 6000);
 	if (result_code != MODEM_OK)
 	{
-#ifdef DEBUG_SYSTEM
 		LOG_ERR("Could not open the UDP connection, modem status %d", result_code);
-#endif
 
-		return result_code;
+		return MODEM_ERROR;
 	}
 
     return MODEM_OK;
@@ -53,7 +50,7 @@ modem_status_t modem_open_connection(const char * server_ip, int port_number)
 
 /**
 * @brief Close an active UDP connection.
-* @retval MODEM_OK on success, or error codes on failure
+* @retval MODEM_OK on success, MODEM_ERROR otherwise.
 */
 modem_status_t modem_close_connection(void)
 {
@@ -64,10 +61,9 @@ modem_status_t modem_close_connection(void)
     result_code = send_command("AT+CIPCLOSE", "CLOSED", NULL, "OK", 0, 2000);
     if (result_code != MODEM_OK)
     {
-#ifdef DEBUG_SYSTEM
         LOG_ERR("Could not close the UDP connection");
-#endif
-        return result_code;
+
+        return MODEM_ERROR;
     }
 
     return MODEM_OK;
@@ -88,9 +84,7 @@ modem_status_t modem_send_udp(void)
 
 	count_loops = cb.size;
 
-#ifdef DEBUG_SYSTEM
-	LOG_INF("%d payloads found!", count_loops);
-#endif
+	LOG_VRB("%d payloads found!", count_loops);
 
 	for (int i=0; i<count_loops; i++)
 	{
@@ -105,21 +99,20 @@ modem_status_t modem_send_udp(void)
 			/*Proceed with the actual data*/
 			result_code = send_command(payload, "SEND OK", NULL, "SEND OK", 0, 2000);
 			if (result_code != MODEM_OK) {
-#ifdef DEBUG_SYSTEM
 				LOG_WRN("Failed to send the payload, it is consider as historical");
-#endif
+
 				CircularBuffer_Push(&cb, payload);
 			}
 			continue;
 		} else if (result_code != MODEM_OK)
 		{
-#ifdef DEBUG_SYSTEM
 			LOG_WRN("Failed to send the payload, it is consider as historical");
-#endif
 			CircularBuffer_Push(&cb, payload);
 		}
 
 	}
+
+
 	return result_code;
 }
 
@@ -163,12 +156,10 @@ modem_status_t modem_receive_data(char * response)
         return result_code;
     }
 
-#ifdef DEBUG_SYSTEM
     LOG_INF("Server IP: %s", server_ip);
     LOG_INF("Server Port: %d", server_port);
     LOG_INF("Response Length:%d", payload_len);
     LOG_INF("JSON: %s", response);
-#endif
 
     return MODEM_OK;
 }
@@ -189,9 +180,8 @@ modem_status_t modem_power_down(void)
 
     if (result_code != 0)
     {
-#ifdef DEBUG_SYSTEM
         LOG_ERR("Could not set the device to sleep mode");
-#endif
+
         return result_code;
     }
 
@@ -337,12 +327,11 @@ modem_status_t send_command(const char *command, const char *exp, const char *ex
     	uart1_transmit(command_to_send, strlen(command_to_send)); // Transmit the command via UART
     }
 
-#ifdef DEBUG_SYSTEM
-    printf("%c>>>>", '\n'); // Start of debug output
+    LOG_VRB(">>>>"); // Start of debug output
     if (command != NULL || command[0] != '\0') {
-    	printf("Command: %s%c%c", command, '\r', '\n'); // Print the command being sent
+    	LOG_VRB("Command: %s%c%c", command, '\r', '\n'); // Print the command being sent
     }
-#endif
+
 
     /* Wait for the response from the device */
     while (response < 0)
@@ -350,10 +339,9 @@ modem_status_t send_command(const char *command, const char *exp, const char *ex
         /* Check for timeout */
         if ((get_tick() - start_time) >= delay)
         {
-#ifdef DEBUG_SYSTEM
             LOG_WRN("Timeout occurred"); // Log a warning if a timeout occurs
-#endif
             response = MODEM_TIMEOUT; // Set response status to timeout
+
             break;
         }
 
@@ -385,19 +373,14 @@ modem_status_t send_command(const char *command, const char *exp, const char *ex
         }
     }
 
-#ifdef DEBUG_SYSTEM
     /* Print the response if available */
     if (response_buffer[0] != '\0')
     {
-    	printf("%s\r\n", response_buffer); // Print the response buffer
+    	LOG_VRB("%s\r\n", response_buffer); // Print the response buffer
     }
-#endif
 
-
-#ifdef DEBUG_SYSTEM
-    printf("<<<<");
+    LOG_VRB("<<<<");
     printf("%c%c%c%c", RETURN, NEWLINE, RETURN, NEWLINE);
-#endif
 
     return response; // Return the final response status
 }

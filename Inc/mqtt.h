@@ -12,7 +12,6 @@
 #define MQTT_H_
 
 #include <main.h>
-#include <low_level_com.h>
 
 #define MAX_AT_CMD_LENGTH 256
 #define MAX_TOKEN_LENGTH 128

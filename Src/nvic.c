@@ -11,7 +11,7 @@
 
 #include <main.h>
 #include <uart.h>
-#include <swo.h>
+#include <logger.h>
 #include <timebase.h>
 #include <pwr.h>
 #include <device.h>
@@ -129,7 +129,7 @@ void HardFault_Handler(void)
     while (1)
     {
         // Infinite loop
-    	LOG_ERR("Stack on while\r\n");
+    	LOG_ERR("Stack on while");
     	for(int i=0;i<10000000;i++);
     }
 }

@@ -50,9 +50,7 @@ int rtc_init(rtcType rtc)
 
     if (timeout == 0)
     {
-#ifdef DEBUG_SYSTEM
         LOG_ERR("Failed to enable LSI clock");
-#endif
         return -1;
     }
 
@@ -76,9 +74,7 @@ int rtc_init(rtcType rtc)
 
     if (timeout == 0)
     {
-#ifdef DEBUG_SYSTEM
         LOG_ERR("Failed to enter RTC initialization mode");
-#endif
         return -1;
     }
 
@@ -95,9 +91,7 @@ int rtc_init(rtcType rtc)
     }
     else
     {
-#ifdef DEBUG_SYSTEM
          LOG_WRN("Invalid time provided");
-#endif
         return -1;
     }
 
@@ -108,9 +102,7 @@ int rtc_init(rtcType rtc)
     }
     else
     {
-#ifdef DEBUG_SYSTEM
         LOG_WRN("Invalid date provided");
-#endif
         return -1;
     }
 
@@ -142,10 +134,6 @@ uint32_t _RTC_get_date(void)
  */
 uint32_t _RTC_get_year(void)
 {
-//    uint32_t year_bcd = (RTC->DR & (RTC_DR_YT | RTC_DR_YU)) >> RTC_DR_YU_Pos;
-//    //uint32_t year = _RTC_convert_bcd2bin(year_bcd);  // Add BCD to BIN conversion
-//    return year;
-
     return (uint32_t) ((RTC->DR & (RTC_DR_YT | RTC_DR_YU)) >> RTC_DR_YU_Pos);
 }
 
@@ -331,10 +319,8 @@ int RTC_set_alarm(uint32_t total_seconds)
     current_minutes = _RTC_convert_bcd2bin(_RTC_get_minute());
     current_seconds = _RTC_convert_bcd2bin(_RTC_get_second());
 
-#ifdef DEBUG_SYSTEM
     /* Debug current time */
-    LOG_INF("Current Time: %02d:%02d:%02d", current_hours, current_minutes, current_seconds);
-#endif
+    LOG_VRB("Current Time: %02d:%02d:%02d", current_hours, current_minutes, current_seconds);
 
     /* Convert total_seconds to HH:MM:SS format */
     uint32_t added_hours = total_seconds / 3600;
@@ -371,19 +357,15 @@ int RTC_set_alarm(uint32_t total_seconds)
     uint8_t bcd_alarm_minute = _RTC_convert_bin2bcd(alarm_minutes);
     uint8_t bcd_alarm_second = _RTC_convert_bin2bcd(alarm_seconds);
 
-#ifdef DEBUG_SYSTEM
     /* Debug alarm time */
-    LOG_INF("Alarm Time: %02X:%02X:%02X", bcd_alarm_hour, bcd_alarm_minute, bcd_alarm_second);
-#endif
+    LOG_VRB("Alarm Time: %02X:%02X:%02X", bcd_alarm_hour, bcd_alarm_minute, bcd_alarm_second);
+
     /* Set the Alarm A registers */
     RTC->ALRMAR = (bcd_alarm_second |
                   (bcd_alarm_minute << 8) |
                   (bcd_alarm_hour << 16));
 
     /* Mask the fields for Alarm A */
-//    RTC->ALRMAR |= RTC_ALRMAR_MSK4 | RTC_ALRMAR_MSK3; // Example mask setting to use hours only
-//    RTC->ALRMASSR = RTC_ALRMASSR_MASKSS; // Mask all seconds
-
     RTC->ALRMAR |= RTC_ALRMAR_MSK4;
     RTC->ALRMAR &= ~ (RTC_ALRMAR_MSK3 | RTC_ALRMAR_MSK2 | RTC_ALRMAR_MSK1); // Example mask setting to use hours only
     RTC->ALRMASSR = 0; // Mask all seconds
@@ -426,13 +408,14 @@ uint32_t RTC_get_timestamp(void)
     uint32_t hour   = _RTC_convert_bcd2bin(_RTC_get_hour());
     uint32_t minute = _RTC_convert_bcd2bin(_RTC_get_minute());
     uint32_t second = _RTC_convert_bcd2bin(_RTC_get_second());
-#ifdef DEBUG_SYSTEM
-    LOG_INF("Unix timestamp: %04lu-%02lu-%02lu %02lu:%02lu:%02lu\n",
+
+    LOG_VRB("Unix timestamp: %04lu-%02lu-%02lu %02lu:%02lu:%02lu\n",
             year, month, day, hour, minute, second);
-#endif
+
     // Basic validation
     if (month < 1 || month > 12 || day < 1 || day > 31 ||
         hour > 23 || minute > 59 || second > 59 || year < 1970) {
+
         LOG_ERR("Invalid time values: rejecting timestamp conversion");
         return 0;
     }

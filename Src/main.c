@@ -10,7 +10,6 @@
 
 
 #include <main.h>           // Basic C functionality & CMSIS data
-#include <swo.h>            // LOGS
 #include <system_init.h>    // Clock configuration
 #include <timebase.h>       // SysTick timer
 #include <wifi.h>           // WiFi functionality
@@ -25,6 +24,7 @@
 #include <mqtt.h>           // MQTT Functionality
 #include <https.h>          // HTTP/S Functionality
 #include <bme280.h>         // Temperature & Humidity
+#include <logger.h>         // LOGS
 
 
 /*Definitions*/
@@ -60,8 +60,6 @@ struct stateflow
 
 
 typedef struct stateflow stateflowType;
-
-
 
 /*Function prototypes*/
 static void Disable_SysTick(void);
@@ -109,9 +107,12 @@ stateflowType state_table[NUM_OF_STATES] =
 
 //TODO: Add encryption to the payload
 
+uint32_t on_time_duration = 0;
+
 int main(void)
 {
 	/* Local variables */
+	int alarm_in_seconds = 0;
 
     /* Initialize HSI as system clock */
     rccInit();
@@ -128,20 +129,18 @@ int main(void)
     /* Initialize UART1 peripheral for communication with ESP32 module */
     uart1_init();
 
-#ifdef DEBUG_SYSTEM
     /* Check the system clock */
     if (READ_BIT(RCC->CFGR, RCC_CFGR_SWS) == RCC_CFGR_SWS_HSI)
     {
     	/* HSI is system clock */
-        LOG_INF("System clock is configured to 16MHz");
+        LOG_VRB("System clock is configured to 16MHz");
     }
 
     /*Check if WD reset occurred*/
     if ((RCC->CSR & RCC_CSR_IWDGRSTF) == RCC_CSR_IWDGRSTF)
     {
-        LOG_INF("Watchdog reset occurred");
+        LOG_WRN("Watchdog reset occurred");
     }
-#endif
 
     /* Initialize ADC1 peripheral for MCU temperature sensor reading */
     adc1_init();
@@ -166,11 +165,11 @@ int main(void)
     device.flg.first_time = 1;
     sequence_number = 0;
 
-    while(1) {}
-
     /* Test device peripherals */
     initiate_testing();
 
+    /*Start calculating on time duration*/
+    on_time_duration = get_tick();
 
     while (1)
     {
@@ -197,12 +196,16 @@ int main(void)
 			sequence_number = (sequence_number + 1) % 10000; //Wrap around if you reach 1000 packets.
 
 			/*Set the alarm in seconds*/
-			RTC_set_alarm(keep_alive);
+			alarm_in_seconds = keep_alive - on_time_duration;
+			if (alarm_in_seconds < 0)
+			{
+				alarm_in_seconds = 60; // In case of failure set one minute as default keep alive time
+			}
 
-#ifdef DEBUG_SYSTEM
+			RTC_set_alarm(alarm_in_seconds);
+
 	        LOG_INF("Going to sleep");
-	        LOG_INF("Keep alive message in %d sec - %d min", keep_alive, (keep_alive/60));
-#endif
+	        LOG_VRB("Keep alive message in %d sec - %d min", alarm_in_seconds, (alarm_in_seconds/60));
 		}
 
 
@@ -235,9 +238,7 @@ int main(void)
         /*Resume SysTick timer*/
         Resume_SysTick();
 
-#ifdef DEBUG_SYSTEM
         LOG_INF("Just wake up");
-#endif
 
     	/*Query the WiFi connection status*/
         wifi_get_connection_status();
@@ -306,9 +307,7 @@ static void initiate_testing(void)
     int imei_num = -1;
     int rssi = -1;
 
-#ifdef DEBUG_SYSTEM
     LOG_INF("---------- TEST CODE ----------");
-#endif
 
     /*Check if the WiFi modem is in sleep mode*/
     wifi_state = modem_get_sleep_state();
@@ -318,28 +317,21 @@ static void initiate_testing(void)
         result_code = send_command("AT+SLEEP=0", "OK", NULL, "OK", 0, 1000);
         if (result_code != 0)
         {
-#ifdef DEBUG_SYSTEM
             LOG_WRN("Couldn't wake-up the WiFi module");
-#endif
         }
-#ifdef DEBUG_SYSTEM
-         LOG_INF("Device wake-up successfully");
-#endif
+
+         LOG_VRB("Device wake-up successfully");
     }
 
     /*Disable echo mode*/
     result_code = send_command("ATE0", "OK", NULL, "OK", 0, 1000);
     if (result_code != 0)
     {
-#ifdef DEBUG_SYSTEM
         LOG_WRN("Couldn't disable echo mode");
-#endif
     }
     else if (result_code == 0)
     {
-#ifdef DEBUG_SYSTEM
-    	LOG_INF("Echo mode disabled successfully");
-#endif
+    	LOG_VRB("Echo mode disabled successfully");
     }
 
 
@@ -396,7 +388,6 @@ static void initiate_testing(void)
     wifi_update_time(RTClock);
 
 
-#ifdef DEBUG_SYSTEM
     LOG_INF("---------- TEST RESULTS ----------");
 
     printf("%c%c", RETURN, NEWLINE);
@@ -447,7 +438,6 @@ static void initiate_testing(void)
     printf("%c%c", RETURN, NEWLINE);
 
     LOG_INF("---------- END OF TEST CODE ----------");
-#endif
 }
 
 /**
@@ -487,16 +477,12 @@ void server_update()
     int result = -1;
     uint32_t retries = 0;
 
-#ifdef DEBUG_SYSTEM
     LOG_INF("---------- SERVER UPDATE ----------");
-#endif
 
     do
     {
+    	LOG_VRB("\tSTATE : %s%c%c", state_table[current_state].state_name, RETURN, NEWLINE);
 
-#ifdef DEBUG_SYSTEM
-    	printf("\t\tSTATE : %s%c%c", state_table[current_state].state_name, RETURN, NEWLINE);
-#endif
         /*Execute the current state's function and get the result (0 for failure, 1 for success)*/
         result = state_table[current_state].state_function();
 
@@ -523,10 +509,7 @@ void server_update()
 
     } while (current_state != STOP);
 
-#ifdef DEBUG_SYSTEM
     LOG_INF("---------- END OF SERVER UPDATE ----------");
-#endif
-
 }
 
 /**
@@ -644,9 +627,8 @@ int FSM_receive_data()
     result = modem_receive_data(response_payload);
     if (result != 0)
     {
-#ifdef DEBUG_SYSTEM
         LOG_ERR("In receiving data from server");
-#endif
+
         return -1;
     }
 
@@ -656,11 +638,10 @@ int FSM_receive_data()
     VariableHolderType variables[key_count];
     extract_json_data(response_payload, keys, key_count, variables);
 
-#ifdef DEBUG_SYSTEM
     LOG_INF("RECEIVE: %s", response_payload);
     LOG_INF("Sequence Number      : %d", variables[0].int_val);
     LOG_INF("Keep Alive Frequency : %d", variables[1].int_val);
-#endif
+
     keep_alive = variables[1].int_val;
 
     return 0;
