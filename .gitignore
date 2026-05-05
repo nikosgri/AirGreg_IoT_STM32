@@ -1,5 +1,10 @@
 Debug/
 Release/
+build/
+*.out
+*.gcda
+*.gcno
+*.gcov
 *.o
 *.elf
 *.list
